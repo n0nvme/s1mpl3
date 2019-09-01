@@ -99,7 +99,7 @@ theme.titlebar_close_button_focus  = theme_path.."titlebar/close_focus.png"
 --theme.titlebar_maximized_button_normal_active = theme_path.."titlebar/maximized_normal_active.png"
 --theme.titlebar_maximized_button_focus_active  = theme_path.."titlebar/maximized_focus_active.png"
 
-theme.wallpaper = theme_path.."background.png"
+theme.wallpaper = theme_path.."fuck_you.jpg"
 
 -- You can use your own layout icons like this:
 theme.layout_fairh = theme_path.."layouts/fairhw.png"
