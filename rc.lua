@@ -45,7 +45,7 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init("~/.config/awesome/themes/" .. "svmpl3/theme.lua")
+beautiful.init("~/.config/awesome/themes/" .. "s1mpl3/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "terminator"
