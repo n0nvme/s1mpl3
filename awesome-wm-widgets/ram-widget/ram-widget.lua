@@ -15,8 +15,8 @@ local function worker(args)
             '#74aeab', '#26403f'
         },
         display_labels = false,
-        forced_width = 50,
-        forced_height = 50,
+        forced_width = 20,
+        forced_height = 20,
         widget = wibox.widget.piechart
     }
 
@@ -37,7 +37,7 @@ local function worker(args)
             '#4b817e',
         },
         display_labels = false,
-        forced_width = 50,
+        forced_width = 20,
         id = 'pie',
         widget = wibox.widget.piechart
     }

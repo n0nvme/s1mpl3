@@ -53,8 +53,8 @@ local function worker(args)
         rounded_edge = true,
         thickness = arc_thickness,
         start_angle = 4.71238898, -- 2pi*3/4
-        forced_height = 40,
-        forced_width = 40,
+        forced_height = 15,
+        forced_width = 15,
         bg = "#ffffff11",
         paddings = 2,
         widget = wibox.container.arcchart,
