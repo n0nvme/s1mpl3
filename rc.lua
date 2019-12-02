@@ -4,6 +4,7 @@ local awful = require("awful")
 require("awful.autofocus")
 -- Widget and layout library
 local wibox = require("wibox")
+local lain = require("lain")
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
@@ -12,7 +13,9 @@ local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- my libraries
 local battery_widget = require("widgets.battery")
-
+local batteryarc_widget = require("awesome-wm-widgets.batteryarc-widget.batteryarc")
+local cpu_widget = require("awesome-wm-widgets.cpu-widget.cpu-widget")
+local ram_widget = require("awesome-wm-widgets.ram-widget.ram-widget")
 
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
@@ -117,6 +120,10 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
+
+--Widgets
+local markup = lain.util.markup
+space3 = markup.font("Terminus 3", " ")
 -- {{{ Keyboard map indicator and switcher
 mykeyboardlayout = awful.widget.keyboardlayout()
 kbdcfg = {}
@@ -125,6 +132,7 @@ kbdcfg.layout = { { "us", "", "🇺🇸" }, { "ru", "", "🇷🇺" } }
 kbdcfg.current = 1  -- us is our default layout
 kbdcfg.widget = wibox.widget.textbox()
 kbdcfg.widget:set_text(" " .. kbdcfg.layout[kbdcfg.current][3] .. " ")
+kbdcfg.widget.font = 'terminus 15'
 kbdcfg.switch = function ()
    kbdcfg.current = kbdcfg.current % #(kbdcfg.layout) + 1
    local t = kbdcfg.layout[kbdcfg.current]
@@ -132,6 +140,19 @@ kbdcfg.switch = function ()
    os.execute( kbdcfg.cmd .. " " .. t[1] .. " " .. t[2] )
    naughty.notify({title = "Keyboard Layout", text = t[1], timeout = 2})
 end
+
+
+--- CPU {{{
+-- local cpu_icon = wibox.widget.imagebox(beautiful.widget_cpu)
+-- local cpu = lain.widget.cpu({
+--     settings = function()
+--         widget:set_markup("cpu: " .. cpu_now.usage .. "%" .. markup.font("Terminus 4", " "))
+--     end
+-- })
+-- local cpu_widget = wibox.container.background(cpu.widget)
+-- cpu_widget.bgimage=beautiful.widget_display
+--- }}}
+
 
 -- Mouse bindings
 kbdcfg.widget:buttons(awful.util.table.join(
@@ -247,9 +268,26 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             -- btr.widget,
-            battery_widget,
+            ram_widget({
+                
+            }),
+            cpu_widget({
+                width = 70,
+                step_width = 5,
+                --step_spacing = 0,
+                --color = '#434c5e'
+            }),
+            batteryarc_widget({
+                warning_msg_position = 'top_right',
+                font = 'terminus 2',
+                show_current_level = true,
+                thickness = 2,
+                main_color = '#00ff00',
+            }),
             kbdcfg.widget,
             wibox.widget.systray(),
+            battery_widget,
+            -- cpu_widget,
             mytextclock,
             s.mylayoutbox,
         },
