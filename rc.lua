@@ -279,8 +279,6 @@ awful.screen.connect_for_each_screen(function(s)
             }),
             batteryarc_widget({
                 warning_msg_position = 'top_right',
-                font = 'terminus 2',
-                show_current_level = true,
                 thickness = 2,
                 main_color = '#00ff00',
             }),
@@ -637,3 +635,7 @@ end)
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
+
+-- garbage collect
+collectgarbage("setpause", 160)
+collectgarbage("setstepmul", 400)
