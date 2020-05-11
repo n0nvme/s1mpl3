@@ -51,7 +51,7 @@ end
 beautiful.init("~/.config/awesome/themes/" .. "s1mpl3/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "terminator"
+terminal = "alacritty"
 editor = os.getenv("EDITOR") or "nano"
 editor_cmd = terminal .. " -e " .. editor
 
