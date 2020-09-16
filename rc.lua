@@ -235,7 +235,7 @@ awful.screen.connect_for_each_screen(function(s)
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
-    awful.tag({ "telegram", "chrome", "vscode", "terminal", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+    awful.tag({ "telegram", "chrome", "vscode", "terminal", "spotify", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -269,7 +269,7 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             -- btr.widget,
             ram_widget({
-                
+
             }),
             cpu_widget({
                 width = 70,
@@ -282,6 +282,9 @@ awful.screen.connect_for_each_screen(function(s)
                 thickness = 2,
                 main_color = '#00ff00',
             }),
+            -- spotify_widget({
+            --     font = "Terminus 9"
+            -- }),
             kbdcfg.widget,
             wibox.widget.systray(),
             battery_widget,
@@ -326,13 +329,13 @@ globalkeys = gears.table.join(
     ),
     awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
               {description = "show main menu", group = "awesome"}),
-    
+
     awful.key({ modkey,           }, "space", function () kbdcfg.switch() end,
               {description = "change keyboard layout", group = "awesome"}),
 
     awful.key({ modkey,           }, "l", function () awful.spawn.with_shell("sh ~/.config/awesome/lock.sh") end,
               {description = "lock screen", group = "awesome"}),
-    
+
     awful.key({ modkey, "Shift"   }, "p", function () awful.spawn("flameshot gui") end,
               {description = "take a screenshot", group = "awesome"}),
 
@@ -544,6 +547,7 @@ awful.rules.rules = {
     -- Floating clients.
     { rule_any = {
         instance = {
+          "xeyes",
           "DTA",  -- Firefox addon DownThemAll.
           "copyq",  -- Includes session name in class.
         },
@@ -569,7 +573,7 @@ awful.rules.rules = {
 
     -- Add titlebars to normal clients and dialogs
     { rule_any = {type = { "normal", "dialog" }
-      }, properties = { titlebars_enabled = false }
+      }, properties = { titlebars_enabled = true }
     },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
@@ -609,11 +613,16 @@ client.connect_signal("request::titlebars", function(c)
         end)
     )
 
-    awful.titlebar(c) : setup {
+    awful.titlebar(c, {
+        font   = "terminus 6"
+    }) : setup {
         { -- Left
-            awful.titlebar.widget.iconwidget(c),
-            buttons = buttons,
-            layout  = wibox.layout.fixed.horizontal
+            awful.titlebar.widget.floatingbutton (c),
+            awful.titlebar.widget.maximizedbutton(c),
+            awful.titlebar.widget.stickybutton   (c),
+            awful.titlebar.widget.ontopbutton    (c),
+            awful.titlebar.widget.closebutton    (c),
+            layout = wibox.layout.fixed.horizontal()
         },
         { -- Middle
             { -- Title
@@ -624,12 +633,9 @@ client.connect_signal("request::titlebars", function(c)
             layout  = wibox.layout.flex.horizontal
         },
         { -- Right
-            awful.titlebar.widget.floatingbutton (c),
-            awful.titlebar.widget.maximizedbutton(c),
-            awful.titlebar.widget.stickybutton   (c),
-            awful.titlebar.widget.ontopbutton    (c),
-            awful.titlebar.widget.closebutton    (c),
-            layout = wibox.layout.fixed.horizontal()
+            awful.titlebar.widget.iconwidget(c),
+            buttons = buttons,
+            layout  = wibox.layout.fixed.horizontal
         },
         layout = wibox.layout.align.horizontal
     }
