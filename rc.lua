@@ -60,7 +60,7 @@ nice {
         border_width = 0,
     },
 }
--- require('modules.notifications')
+require('modules.notifications')
 
 -- This is used later as the default terminal and editor to run.
 terminal = "kitty"

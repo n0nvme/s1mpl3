@@ -6,7 +6,7 @@ local naughty = require('naughty')
 local menubar = require('menubar')
 local beautiful = require('beautiful')
 local dpi = beautiful.xresources.apply_dpi
-local clickable_container = require('widget.clickable-container')
+local clickable_container = require('widgets.clickable-container')
 
 -- Defaults
 naughty.config.defaults.ontop = true
@@ -45,7 +45,7 @@ ruled.notification.connect_signal(
 		ruled.notification.append_rule {
 			rule       = { urgency = 'critical' },
 			properties = {
-				font        		= 'Inter Bold 10',
+				font        		= 'Inter Bold 11',
 				bg 					= '#ff0000',
 				fg 					= '#ffffff',
 				margin 				= dpi(16),
@@ -58,7 +58,7 @@ ruled.notification.connect_signal(
 		ruled.notification.append_rule {
 			rule       = { urgency = 'normal' },
 			properties = {
-				font        		= 'Inter Regular 10',
+				font        		= 'Inter Regular 11',
 				bg      			= beautiful.transparent,
 				fg 					= beautiful.fg_normal,
 				margin 				= dpi(16),
@@ -71,7 +71,7 @@ ruled.notification.connect_signal(
 		ruled.notification.append_rule {
 			rule       = { urgency = 'low' },
 			properties = {
-				font        		= 'Inter Regular 10',
+				font        		= 'Inter Regular 11',
 				bg     				= beautiful.transparent,
 				fg 					= beautiful.fg_normal,
 				margin 				= dpi(16),
@@ -232,7 +232,8 @@ naughty.connect_signal(
 							widget = naughty.container.background,
 						},
 						strategy = 'min',
-						width    = dpi(160),
+						width    = dpi(320),
+						height   = dpi(60),
 						widget   = wibox.container.constraint,
 					},
 					strategy = 'max',
