@@ -44,9 +44,9 @@ ruled.notification.connect_signal(
 		-- Critical notifs
 		ruled.notification.append_rule {
 			rule       = { urgency = 'critical' },
-			properties = { 
+			properties = {
 				font        		= 'Inter Bold 10',
-				bg 					= '#ff0000', 
+				bg 					= '#ff0000',
 				fg 					= '#ffffff',
 				margin 				= dpi(16),
 				position 			= 'top_right',
@@ -59,7 +59,7 @@ ruled.notification.connect_signal(
 			rule       = { urgency = 'normal' },
 			properties = {
 				font        		= 'Inter Regular 10',
-				bg      			= beautiful.transparent, 
+				bg      			= beautiful.transparent,
 				fg 					= beautiful.fg_normal,
 				margin 				= dpi(16),
 				position 			= 'top_right',
@@ -70,7 +70,7 @@ ruled.notification.connect_signal(
 		-- Low notifs
 		ruled.notification.append_rule {
 			rule       = { urgency = 'low' },
-			properties = { 
+			properties = {
 				font        		= 'Inter Regular 10',
 				bg     				= beautiful.transparent,
 				fg 					= beautiful.fg_normal,
@@ -241,10 +241,10 @@ naughty.connect_signal(
 				},
 				bg = beautiful.background,
 				shape = gears.shape.rounded_rect,
-				widget = wibox.container.background	
+				widget = wibox.container.background
 			}
 		}
-	
+
 		-- Destroy popups if dont_disturb mode is on
 		-- Or if the right_panel is visible
 		local focused = awful.screen.focused()
