@@ -150,7 +150,6 @@ kbdcfg.switch = function ()
    local t = kbdcfg.layout[kbdcfg.current]
    kbdcfg.widget:set_text( " " .. t[3] .. " ")
    os.execute( kbdcfg.cmd .. " " .. t[1] .. " " .. t[2] )
-   naughty.notify({title = "Keyboard Layout", text = t[1], timeout = 2})
 end
 
 
