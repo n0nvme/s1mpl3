@@ -59,8 +59,8 @@ ruled.notification.connect_signal(
 			rule       = { urgency = 'normal' },
 			properties = {
 				font        		= 'Inter Regular 11',
-				bg      			= beautiful.transparent,
-				fg 					= beautiful.fg_normal,
+				bg      			= beautiful.bg_focus,
+				fg 					= beautiful.fg_focus,
 				margin 				= dpi(16),
 				position 			= 'top_right',
 				implicit_timeout 	= 5
@@ -72,8 +72,8 @@ ruled.notification.connect_signal(
 			rule       = { urgency = 'low' },
 			properties = {
 				font        		= 'Inter Regular 11',
-				bg     				= beautiful.transparent,
-				fg 					= beautiful.fg_normal,
+				bg     				= beautiful.bg_focus,
+				fg 					= beautiful.fg_focus,
 				margin 				= dpi(16),
 				position 			= 'top_right',
 				implicit_timeout	= 5
@@ -154,6 +154,7 @@ naughty.connect_signal(
 			type = 'notification',
 			screen = awful.screen.preferred(),
 			shape = gears.shape.rectangle,
+			bg = '#00000000',
 			widget_template = {
 				{
 					{
@@ -166,16 +167,20 @@ naughty.connect_signal(
 												{
 													{
 														markup = n.app_name or 'System Notification',
-														font = 'Inter Bold 10',
+														font = 'Inter Bold 12',
 														align = 'center',
 														valign = 'center',
-														widget = wibox.widget.textbox
+														widget = wibox.widget.textbox,
+														-- fg = beautiful.fg_focus,
+														-- bg = beautiful.bg_normal,
 
 													},
 													margins = beautiful.notification_margin,
 													widget  = wibox.container.margin,
 												},
-												bg = beautiful.background,
+												-- bg = beautiful.background,
+												-- fg = beautiful.fg_focus,
+												bg = beautiful.bg_normal,
 												widget  = wibox.container.background,
 											},
 											{

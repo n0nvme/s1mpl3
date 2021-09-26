@@ -13,6 +13,7 @@ local theme_path = "~/.config/awesome/themes/s1mpl3/"
 local theme = {}
 
 theme.font          = "terminus 9"
+theme.transparent   = "#00000000"
 
 theme.bg_normal     = "#002B36"
 theme.bg_focus      = "#003A40"
