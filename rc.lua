@@ -4,7 +4,6 @@ local awful = require("awful")
 require("awful.autofocus")
 -- Widget and layout library
 local wibox = require("wibox")
-local lain = require("lain")
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
@@ -137,8 +136,6 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- }}}
 
 -- Widgets
-local markup = lain.util.markup
-space3 = markup.font("Terminus 3", " ")
 -- {{{ Keyboard map indicator and switcher
 mykeyboardlayout = awful.widget.keyboardlayout()
 kbdcfg = {}
@@ -154,17 +151,6 @@ kbdcfg.switch = function()
     kbdcfg.widget:set_text(" " .. t[3] .. " ")
     os.execute(kbdcfg.cmd .. " " .. t[1] .. " " .. t[2])
 end
-
---- CPU {{{
--- local cpu_icon = wibox.widget.imagebox(beautiful.widget_cpu)
--- local cpu = lain.widget.cpu({
---     settings = function()
---         widget:set_markup("cpu: " .. cpu_now.usage .. "%" .. markup.font("Terminus 4", " "))
---     end
--- })
--- local cpu_widget = wibox.container.background(cpu.widget)
--- cpu_widget.bgimage=beautiful.widget_display
---- }}}
 
 -- Mouse bindings
 kbdcfg.widget:buttons(awful.util.table.join(awful.button({}, 1, function()
