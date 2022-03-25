@@ -11,7 +11,6 @@ local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- my libraries
-local battery_widget = require("widgets.battery")
 local batteryarc_widget = require("awesome-wm-widgets.batteryarc-widget.batteryarc")
 local cpu_widget = require("awesome-wm-widgets.cpu-widget.cpu-widget")
 local ram_widget = require("awesome-wm-widgets.ram-widget.ram-widget")
@@ -280,13 +279,8 @@ awful.screen.connect_for_each_screen(function(s)
                 thickness = 2,
                 main_color = '#00ff00'
             }),
-            -- spotify_widget({
-            --     font = "Terminus 9"
-            -- }),
             kbdcfg.widget,
             wibox.widget.systray(),
-            battery_widget,
-            -- cpu_widget,
             mytextclock,
             s.mylayoutbox
         }
