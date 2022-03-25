@@ -10,7 +10,7 @@
     - any other string will start a search and play the first result for a given search query;
     - feh - shows the current artwork with `feh`;
 
-1. Stores history and allows navigate through it;
+1. Stores history and allows navigating through it;
 
 1. Highly customizable
 
@@ -32,7 +32,7 @@ Keyboard navigation (copied from [`awful.prompt`](https://awesomewm.org/doc/api/
 | CTRL+K | kill-line |
 | CTRL+U | unix-line-discard |
 | CTRL+W | unix-word-rubout |
-| CTRL+BACKSPAC | unix-word-rubout |
+| CTRL+BACKSPACE | unix-word-rubout |
 | SHIFT+INSERT | paste |
 | HOME | beginning-of-line |
 | END | end-of-line |

@@ -30,10 +30,14 @@ function widget.new()
         local w = wibox {
             visible = false,
             ontop = true,
-            height = 1060,
-            width = 1920,
+            height = mouse.screen.geometry.height,
+            width = mouse.screen.geometry.width,
             opacity = 0.9,
-            bg = 'radial:960,540,20:960,540,700:0,#00000022:0.2,#33333388:1,#000000ff'
+            bg = 'radial:'.. mouse.screen.geometry.width/2 .. ','
+                    .. mouse.screen.geometry.height/2 .. ',20:'
+                    .. mouse.screen.geometry.width/2 .. ','
+                    .. mouse.screen.geometry.height/2
+                    .. ',700:0,#2E344022:0.2,#4C566A88:1,#2E3440ff'
         }
 
         local suspend_button = wibox.widget {
@@ -41,6 +45,7 @@ function widget.new()
             widget = wibox.widget.imagebox,
             resize = false,
             opacity = 0.2,
+            --luacheck:ignore 432
             set_hover = function(self, opacity)
                 self.opacity = opacity
                 self.image = '/usr/share/icons/Arc/actions/symbolic/system-shutdown-symbolic.svg'

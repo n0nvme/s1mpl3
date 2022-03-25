@@ -1,91 +1,119 @@
 # Volume widget
 
-Simple and easy-to-install widget for Awesome Window Manager which shows the sound level: ![Volume Widget](
-./vol-widget-1.png)
+Volume widget based on [amixer](https://linux.die.net/man/1/amixer) (is used for controlling the audio volume) and [pacmd](https://linux.die.net/man/1/pacmd) (is used for selecting a sink/source). Also, the widget provides an easy way to customize how it looks, following types are supported out-of-the-box:
 
-Note that widget uses the Arc icon theme, so it should be [installed](https://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
+![types](screenshots/variations.png)
 
-## Customization
+From left to right: `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc`
 
-It is possible to customize widget by providing a table with all or some of the following config parameters:
+A right-click on the widget opens a popup where you can choose a sink/source:  
+![sink-sources](screenshots/volume-sink-sources.png)
 
-| Name | Default | Description |
-|---|---|---|
-| `volume_audio_controller` | `pulse` | audio device |
-| `notification` | `false` | Display a notification on mouseover |
-| `notification_position` | `top_right` | The notification position |
+Left click toggles mute and middle click opens a mixer ([pavucontrol](https://freedesktop.org/software/pulseaudio/pavucontrol/) by default).
+
+### Features
+
+ - switch between sinks/sources by right click on the widget;
+ - more responsive than previous versions of volume widget, which were refreshed once a second;
+ - 5 predefined customizable looks;
 
 ## Installation
 
-- clone/copy **volume.lua** file;
-
-- include `volume.lua` and add volume widget to your wibox in rc.lua:
+Clone the repo under **~/.config/awesome/** and add widget in **rc.lua**:
 
 ```lua
-require("volume")
+local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
 ...
 s.mytasklist, -- Middle widget
 	{ -- Right widgets
     	layout = wibox.layout.fixed.horizontal,
-		...
-		volume_widget(),
-		...
+        ...
+        -- default
+        volume_widget(),
+        -- customized
+        volume_widget{
+            widget_type = 'arc'
+        },
 ```
 
-- _Optional step._ In Arc icon theme the muted audio level icon (![Volume-widget](./audio-volume-muted-symbolic.png)) looks like 0 level icon, which could be a bit misleading.
- So I decided to use original muted icon for low audio level, and the same icon, but colored in red for muted audio level. Fortunately icons are in svg format, so you can easily recolor them with `sed`, so it would look like this (![Volume Widget](./audio-volume-muted-symbolic_red.png)):
+Note that widget uses following command the get the current volume: `amixer -D pulse sget Master`, so please make sure that it works for you, otherwise you need to set parameter `device = 'default'`.
 
- ```bash
- cd /usr/share/icons/Arc/status/symbolic &&
- sudo cp audio-volume-muted-symbolic.svg audio-volume-muted-symbolic_red.svg &&
- sudo sed -i 's/bebebe/ed4737/g' ./audio-volume-muted-symbolic_red.svg
- ```
+### Shortcuts
 
-### Pulse or ALSA only
-
-Try running this command:
-
-```bash
-amixer -D pulse sget Master
-```
-
-If that prints something like this, then the default setting of 'pulse' is probably fine:
-
-```
-Simple mixer control 'Master',0
-  Capabilities: pvolume pvolume-joined pswitch pswitch-joined
-  Playback channels: Mono
-  Limits: Playback 0 - 64
-  Mono: Playback 64 [100%] [0.00dB] [on]
-
-```
-
-If it prints something like this:
-
-```bash
-$ amixer -D pulse sget Master
-ALSA lib pulse.c:243:(pulse_connect) PulseAudio: Unable to connect: Connection refused
-
-amixer: Mixer attach pulse error: Connection refused
-```
-then set `volume_audio_controller` to `alsa_only` in widget constructor:
+To improve responsiveness of the widget when volume level is changed by a shortcut use corresponding methods of the widget:
 
 ```lua
-volume_widget({
-    volume_audio_controller = 'alsa_only'
-})
+awful.key({ modkey }, "]", function() volume_widget:inc(5) end),
+awful.key({ modkey }, "[", function() volume_widget:dec(5) end),
+awful.key({ modkey }, "\\", function() volume_widget:toggle() end),
 ```
 
-.
+## Customization
 
-## Control volume
+It is possible to customize the widget by providing a table with all or some of the following config parameters:
 
-To mute/unmute click on the widget. To increase/decrease volume scroll up or down when mouse cursor is over the widget.
+### Generic parameter
 
-If you want to control volume level by keyboard shortcuts add following lines in shortcut section of the **rc.lua** (the commands could be slightly different depending on your PC configuration):
+| Name | Default | Description |
+|---|---|---|
+| `mixer_cmd` | `pavucontrol` | command to run on middle click (e.g. a mixer program) |
+| `step` | `5` | How much the volume is raised or lowered at once (in %) |
+| `widget_type`| `icon_and_text`| Widget type, one of `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc` |
+| `device` | `pulse` | Select the device name to control |
 
-```lua
-awful.key({ modkey}, "[", function () awful.spawn("amixer -D pulse sset Master 5%+") end, {description = "increase volume", group = "custom"}),
-awful.key({ modkey}, "]", function () awful.spawn("amixer -D pulse sset Master 5%-") end, {description = "decrease volume", group = "custom"}),
-awful.key({ modkey}, "\", function () awful.spawn("amixer -D pulse set Master +1 toggle") end, {description = "mute volume", group = "custom"}),
-```
+Depends on the chosen widget type add parameters from the corresponding section below:
+
+#### `icon` parameters
+
+| Name | Default | Description |
+|---|---|---|
+| `icon_dir`| `./icons`| Path to the folder with icons | 
+
+_Note:_ if you are changing icons, the folder should contain following .svg images: 
+ - audio-volume-high-symbolic
+ - audio-volume-medium-symbolic
+ - audio-volume-low-symbolic
+ - audio-volume-muted-symbolic
+
+#### `icon_and_text` parameters
+
+| Name | Default | Description |
+|---|---|---|
+| `icon_dir`| `./icons`| Path to the folder with icons | 
+| `font` | `beautiful.font` | Font name and size, like `Play 12` |
+
+#### `arc` parameters
+
+| Name | Default | Description |
+|---|---|---|
+| `thickness` | 2 | Thickness of the arc |
+| `main_color` | `beautiful.fg_color` | Color of the arc |
+| `bg_color` | `#ffffff11` | Color of the arc's background |
+| `mute_color` | `beautiful.fg_urgent` | Color of the arc when mute |
+| `size` | 18 | Size of the widget |
+
+#### `horizontal_bar` parameters
+
+| Name | Default | Description |
+|---|---|---|
+| `main_color` | `beautiful.fg_normal` | Color of the bar |
+| `mute_color` | `beautiful.fg_urgent` | Color of the bar when mute |
+| `bg_color` | `'#ffffff11'` | Color of the bar's background |
+| `width` | `50` | The bar width |
+| `margins` | `10` | Top and bottom margins (if your wibar is 22 px high, bar will be 2 px = 22 - 2*10) |
+| `shape` | `'bar'` | [gears.shape](https://awesomewm.org/doc/api/libraries/gears.shape.html), could be `octogon`, `hexagon`, `powerline`, etc |
+| `with_icon` | `true` | Show volume icon|
+
+_Note:_ I didn't figure out how does the `forced_height` property of progressbar widget work (maybe it doesn't work at all), thus there is a workaround with margins.
+
+#### `vertical_bar` parameters
+
+| Name | Default | Description |
+|---|---|---|
+| `main_color` | `beautiful.fg_normal` | Color of the bar |
+| `mute_color` | `beautiful.fg_urgent` | Color of the bar when mute |
+| `bg_color` | `'#ffffff11'` | Color of the bar's background |
+| `width` | `10` | The bar width |
+| `margins` | `20` | Top and bottom margins (if your wibar is 22 px high, bar will be 2 px = 22 - 2*10) |
+| `shape` | `'bar'` | [gears.shape](https://awesomewm.org/doc/api/libraries/gears.shape.html), could be `octogon`, `hexagon`, `powerline`, etc |
+| `with_icon` | `true` | Show volume icon| 

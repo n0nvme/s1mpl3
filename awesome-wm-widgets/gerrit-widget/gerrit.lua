@@ -21,19 +21,24 @@ local gfs = require("gears.filesystem")
 local HOME_DIR = os.getenv("HOME")
 local PATH_TO_AVATARS = HOME_DIR .. '/.cache/awmw/gerrit-widget/avatars/'
 
-local GET_CHANGES_CMD = [[bash -c "curl -s -X GET -n https://%s/a/changes/\\?q\\=%s | tail -n +2"]]
-local GET_USER_CMD = [[bash -c "curl -s -X GET -n https://%s/accounts/%s/ | tail -n +2"]]
+local GET_CHANGES_CMD = [[bash -c "curl -s -X GET -n %s/a/changes/\\?q\\=%s | tail -n +2"]]
+local GET_USER_CMD = [[bash -c "curl -s -X GET -n %s/accounts/%s/ | tail -n +2"]]
 local DOWNLOAD_AVATAR_CMD = [[bash -c "curl --create-dirs -o %s %s"]]
 
 local gerrit_widget = {}
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local icon = args.icons or HOME_DIR .. '/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg'
-    local host = args.host or naughty.notify{preset = naughty.config.presets.critical, text = 'Gerrit host is unknown'}
+    local host = args.host or naughty.notify{
+        preset = naughty.config.presets.critical,
+        title = 'Gerrit Widget',
+        text = 'Gerrit host is unknown'
+    }
     local query = args.query or 'is:reviewer AND status:open AND NOT is:wip'
+    local timeout = args.timeout or 10
 
     local current_number_of_reviews
     local previous_number_of_reviews = 0
@@ -45,14 +50,12 @@ local function worker(args)
     }
 
     local popup = awful.popup{
-        visible = true,
         ontop = true,
         visible = false,
         shape = gears.shape.rounded_rect,
         border_width = 1,
         border_color = beautiful.bg_focus,
         maximum_width = 400,
-        preferred_positions = top,
         offset = { y = 5 },
         widget = {}
     }
@@ -84,17 +87,18 @@ local function worker(args)
     }
 
     local function get_name_by_user_id(user_id)
-        if name_dict[user_id] == null then
+        if name_dict[user_id] == nil then
             name_dict[user_id] = {}
         end
 
         if name_dict[user_id].username == nil then
             name_dict[user_id].username = ''
-            spawn.easy_async(string.format(GET_USER_CMD, host, user_id), function(stdout, stderr, reason, exit_code)
+            spawn.easy_async(string.format(GET_USER_CMD, host, user_id), function(stdout)
                 local user = json.decode(stdout)
                 name_dict[tonumber(user_id)].username = user.name
                 if not gfs.file_readable(PATH_TO_AVATARS .. user_id) then
-                    spawn.easy_async(string.format(DOWNLOAD_AVATAR_CMD, PATH_TO_AVATARS .. user_id, user.avatars[1].url))
+                    spawn.easy_async(
+                        string.format(DOWNLOAD_AVATAR_CMD, PATH_TO_AVATARS .. user_id, user.avatars[1].url))
                 end
             end)
             return name_dict[user_id].username
@@ -108,13 +112,22 @@ local function worker(args)
 
         current_number_of_reviews = rawlen(reviews)
 
+        if current_number_of_reviews == 0 then
+            widget:set_visible(false)
+            return
+        else
+            widget:set_visible(true)
+        end
+
+        widget:set_visible(true)
         if current_number_of_reviews > previous_number_of_reviews then
             widget:set_unseen_review(true)
             naughty.notify{
                 icon = HOME_DIR ..'/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg',
                 title = 'New Incoming Review',
-                text = reviews[1].project .. '\n' .. get_name_by_user_id(reviews[1].owner._account_id) .. reviews[1].subject .. '\n',
-                run = function() spawn.with_shell("google-chrome https://" .. host .. '/' .. reviews[1]._number) end
+                text = reviews[1].project .. '\n' .. get_name_by_user_id(reviews[1].owner._account_id) ..
+                    reviews[1].subject .. '\n',
+                run = function() spawn.with_shell("xdg-open https://" .. host .. '/' .. reviews[1]._number) end
             }
         end
 
@@ -163,8 +176,8 @@ local function worker(args)
                 widget = wibox.container.background
             }
 
-            row:connect_signal("button::release", function(_, _, _, button)
-                spawn.with_shell("google-chrome https://" .. host .. '/' .. review._number)
+            row:connect_signal("button::release", function()
+                spawn.with_shell("xdg-open " .. host .. '/' .. review._number)
             end)
 
             row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
@@ -173,7 +186,7 @@ local function worker(args)
             row:buttons(
                 awful.util.table.join(
                     awful.button({}, 1, function()
-                        spawn.with_shell("google-chrome https://" .. host .. '/' .. review._number)
+                        spawn.with_shell("xdg-open " .. host .. '/' .. review._number)
                         popup.visible = false
                     end),
                     awful.button({}, 3, function()
@@ -196,13 +209,21 @@ local function worker(args)
                 if popup.visible then
                     popup.visible = not popup.visible
                 else
+                    --local geo = mouse.current_widget_geometry
+                    --if theme.calendar_placement == 'center' then
+                    --    local x = geo.x + (geo.width / 2) - (popup:geometry().width / 2) -- align two widgets
+                    --    popup:move_next_to({x = x, y = geo.y + 22, width = 0, height = geo.height})
+                    --else
+                    --    popup:move_next_to(geo)
+                    --end
+
                     popup:move_next_to(mouse.current_widget_geometry)
                 end
             end)
         )
     )
 
-    watch(string.format(GET_CHANGES_CMD, host, query:gsub(" ", "+")), 10, update_widget, gerrit_widget)
+    watch(string.format(GET_CHANGES_CMD, host, query:gsub(" ", "+")), timeout, update_widget, gerrit_widget)
     return gerrit_widget
 end
 
